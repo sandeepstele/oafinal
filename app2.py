@@ -69,6 +69,11 @@ def retrieve_relevant_context(query, k=1):
     distances, indices = faiss_index.search(embedding, k)
     retrieved_docs = [persistent_docs[i] for i in indices[0]]
     return " ".join(retrieved_docs)
+def load_default_prompt():
+    with open("data/oa_kl_document.txt", "r", encoding="utf-8") as f:
+        return f.read()
+
+default_prompt = load_default_prompt()
 
 # -------------------- Flask Endpoints -------------------- #
 @app.route("/")
@@ -233,8 +238,8 @@ def llm():
 @app.route("/virtual_bot", methods=["POST"])
 def virtual_bot():
     """
-    Endpoint to interact with the LLM augmented by Retrieval-Augmented Generation (RAG).
-    It retrieves relevant context from a vector store and uses it to enhance the LLM prompt.
+    Endpoint to interact with the LLM augmented by RAG.
+    It retrieves relevant context from a vector store, and you can also include your default_prompt as fallback.
     Expects a JSON payload with a "prompt" key.
     """
     try:
@@ -245,6 +250,10 @@ def virtual_bot():
 
         # Retrieve relevant context using FAISS
         context = retrieve_relevant_context(prompt, k=1)
+        # If no relevant context is found, you could default to the default_prompt
+        if not context.strip():
+            context = default_prompt
+
         augmented_prompt = f"Context: {context}\n\nUser Prompt: {prompt}"
 
         response = openai.ChatCompletion.create(
