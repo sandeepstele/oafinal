@@ -49,72 +49,72 @@ def clinical_page():
 
 @app.route("/predict_xray", methods=["POST"])
 def predict_xray():
+    # Check if the uploaded file is provided under the key "xray"
     if "xray" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+        return jsonify({"error": "No X-ray file uploaded"}), 400
 
-    file = request.files["xray"]
-    filename = os.path.join("static/uploads", file.filename)
-    file.save(filename)
+    # Retrieve the X-ray file from the request
+    xray_file = request.files["xray"]
+    # Build the full path where the X-ray image will be stored
+    filename = os.path.join("static/uploads", xray_file.filename)
+    xray_file.save(filename)
 
-    # Load and preprocess the image
-    img = tf.keras.preprocessing.image.load_img(filename, target_size=(224, 224))
-    img_array = tf.keras.preprocessing.image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
+    # Load and preprocess the X-ray image
+    # Here we use the Keras image module to load the file and resize it to (224, 224)
+    xray_image = tf.keras.preprocessing.image.load_img(filename, target_size=(224, 224))
+    xray_array = tf.keras.preprocessing.image.img_to_array(xray_image)
+    xray_array = np.expand_dims(xray_array, axis=0)
 
-    # Make prediction
-    prediction = xray_model.predict(img_array)
+    # Run the X-ray model prediction on the preprocessed X-ray image
+    prediction = xray_model.predict(xray_array)
     predicted_class = np.argmax(prediction, axis=-1)
 
+    # Return the predicted class as a JSON response
     return jsonify({"prediction": int(predicted_class[0])})
-
 @app.route("/predict_clinical", methods=["POST"])
 def predict_clinical():
-    print("\n📥 Received Form Data:", request.form)
-
+    print("\n📥 Received Clinical Form Data:", request.form)
     try:
-        # Convert input keys to uppercase for consistency
-        form_data = {key.upper(): value for key, value in request.form.items()}
-        print("\n📥 Normalized Form Data:", form_data)  # Debug print
+        # Normalize input keys to uppercase for consistency
+        clinical_form_data = {key.upper(): value for key, value in request.form.items()}
+        print("\n📥 Normalized Clinical Data:", clinical_form_data)
 
-        # ✅ Ensure only the required 15 features are selected
-        required_features = [
+        # Define the required clinical features for prediction
+        required_clinical_features = [
             "AGE", "HEIGHT", "WEIGHT", "BMI", "FREQUENT_PAIN", "SURGERY",
             "SXKOA", "SWELLING", "BENDING_FULLY", "SYMPTOMATIC", "CREPITUS",
             "KOOS_PAIN_SCORE", "OSTEOPHYTES_Y", "JSN_Y", "OSFL"
         ]
 
-        clinical_data = []
-        for feature in required_features:
-            if feature not in form_data:
-                print(f"❌ ERROR: Missing required feature: {feature}")
-                return jsonify({"error": f"Missing required feature: {feature}"}), 400
-
-            # Convert to float
+        clinical_inputs = []
+        for feature in required_clinical_features:
+            if feature not in clinical_form_data:
+                print(f"❌ ERROR: Missing required clinical feature: {feature}")
+                return jsonify({"error": f"Missing required clinical feature: {feature}"}), 400
             try:
-                value = float(form_data[feature])
+                value = float(clinical_form_data[feature])
             except ValueError:
-                print(f"❌ ERROR: Invalid value for {feature}: {form_data[feature]}")
+                print(f"❌ ERROR: Invalid value for {feature}: {clinical_form_data[feature]}")
                 return jsonify({"error": f"Invalid value for {feature}. Must be a number."}), 400
+            clinical_inputs.append(value)
 
-            clinical_data.append(value)
+        # Convert clinical input features into a NumPy array
+        clinical_inputs_np = np.array([clinical_inputs])
+        print(f"🔍 Clinical Data Shape BEFORE Scaling: {clinical_inputs_np.shape}")
 
-        # Convert to numpy array and reshape
-        clinical_data_np = np.array([clinical_data])
-        print(f"🔍 Clinical Data Shape BEFORE Scaling: {clinical_data_np.shape}")  # Should be (1, 15)
+        # Standardize the clinical data using the pre-loaded scaler
+        clinical_inputs_np = scaler.transform(clinical_inputs_np)
+        print(f"🔍 Clinical Data Shape AFTER Scaling: {clinical_inputs_np.shape}")
 
-        # Standardize Input (Use saved scaler)
-        clinical_data_np = scaler.transform(clinical_data_np)
-        print(f"🔍 Clinical Data Shape AFTER Scaling: {clinical_data_np.shape}")  # Should be (1, 15)
+        # Use the clinical model to make a prediction
+        clinical_prediction = clinical_model.predict(clinical_inputs_np)
+        predicted_clinical_class = np.argmax(clinical_prediction, axis=-1)[0]
+        print(f"✅ Clinical Prediction: {predicted_clinical_class}")
 
-        # Make prediction
-        prediction = clinical_model.predict(clinical_data_np)
-        predicted_class = np.argmax(prediction, axis=-1)[0]  # Extract scalar value
-        print(f"✅ Prediction: {predicted_class}")
-
-        return jsonify({"prediction": int(predicted_class)})
+        return jsonify({"prediction": int(predicted_clinical_class)})
 
     except Exception as e:
-        print(f"❌ SERVER ERROR: {str(e)}")
+        print(f"❌ Clinical Prediction Server Error: {str(e)}")
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 @app.route("/fusion")

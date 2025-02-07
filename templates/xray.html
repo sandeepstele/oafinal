@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X-ray Analysis - OA Disease Detection</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
+        .back-button { text-decoration: none; color: #007BFF; }
+        section { margin-top: 20px; }
+        h2 { margin-bottom: 10px; }
+        #image-result, #kl-summary-section { border: 1px solid #ccc; padding: 10px; border-radius: 4px; }
+    </style>
 </head>
 <body>
     <header>
@@ -24,6 +31,12 @@
                 <p id="prediction-text">Results will appear here.</p>
             </div>
         </section>
+
+        <!-- Section for displaying the KL Score Summary -->
+        <section id="kl-summary-section">
+            <h2>Kellgren–Lawrence Score Summary</h2>
+            <p id="kl-summary">Once the prediction is made, a detailed KL grade summary will appear here.</p>
+        </section>
     </main>
 
     <script>
@@ -37,7 +50,28 @@
             });
 
             let result = await response.json();
+            // Display the prediction result
             document.getElementById("prediction-text").innerText = "Predicted Class: " + result.prediction;
+            
+            // Build a prompt for the LLM based on the predicted KL grade
+            let grade = result.prediction;
+            let llmPrompt = "Provide a detailed explanation for Kellgren–Lawrence (KL) grade " + grade +
+                " for osteoarthritis. Include a description of the radiographic findings, clinical correlations, " +
+                "and recommended management or treatment options.";
+            
+            // Call the backend /llm endpoint to generate the summary
+            let llmResponse = await fetch("/llm", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: llmPrompt })
+            });
+            
+            let llmData = await llmResponse.json();
+            if (llmData.response) {
+                document.getElementById("kl-summary").innerText = llmData.response;
+            } else if (llmData.error) {
+                document.getElementById("kl-summary").innerText = "Error generating summary: " + llmData.error;
+            }
         };
     </script>
 </body>

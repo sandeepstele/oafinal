@@ -1,66 +1,122 @@
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    text-align: center;
-}
-
-header {
-    background: #4CAF50;
+    background-color: #e8f0f3; /* Light clinical blue tone */
+    color: #333;
+  }
+  
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #0077b6, #0096c7); /* Clinical teal gradient */
     color: white;
-    padding: 10px 0;
-    font-size: 24px;
-}
-
-.container {
+    padding: 20px 0;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  
+  /* General Container for Regular Pages */
+  .container {
     display: flex;
     justify-content: space-around;
-    margin: 20px;
+    margin: 30px auto;
     flex-wrap: wrap;
-}
-
-section {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+  }
+  
+  /* Card Style for Sections */
+  section {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 45%;
-    margin-bottom: 20px;
-}
-
-form {
+    margin-bottom: 30px;
+    border: 1px solid #d0d7de;
+  }
+  
+  /* Form Styles */
+  form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
-
-input {
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    background: #4CAF50;
-    color: white;
-    border: none;
+    gap: 15px;
+  }
+  
+  input, button {
     padding: 10px;
     font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  input {
+    border: 1px solid #c0c0c0;
+  }
+  
+  button {
+    background: #0077b6;
+    color: white;
+    border: none;
     cursor: pointer;
-}
-
-button:hover {
-    background: #45a049;
-}
-
-@media (max-width: 768px) {
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background: #005f87;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
     .container {
-        flex-direction: column;
-        align-items: center;
+      flex-direction: column;
+      align-items: center;
     }
     section {
-        width: 90%;
+      width: 90%;
     }
-}
+  }
+  
+  /* Styles for the Late Fusion Page with Fixed Sidebars */
+  .main-content {
+    display: flex;
+    margin: 20px;
+    gap: 20px;
+  }
+  
+  .sidebar-left {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    width: 300px;
+    height: calc(100vh - 100px);
+    background-color: #fff;
+    padding: 20px;
+    border: 2px solid red; /* Debug border */
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .sidebar-right {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 300px;
+    height: calc(100vh - 100px);
+    background-color: #fff;
+    padding: 20px;
+    border: 2px solid blue; /* Debug border */
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .content {
+    margin-left: 340px;
+    margin-right: 340px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
