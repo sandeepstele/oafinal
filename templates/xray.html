@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-ray Analysis - OA Disease Detection</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>X-ray Image Analysis</h1>
+        <a href="/" class="back-button">Back to Home</a>
+    </header>
+    
+    <main>
+        <section id="image-upload">
+            <h2>Upload X-ray Image</h2>
+            <form id="image-form" enctype="multipart/form-data" method="POST" action="/predict_xray">
+                <input type="file" id="xray" name="xray" accept="image/*" required>
+                <button type="submit">Upload Image</button>
+            </form>
+            <div id="image-result">
+                <h3>Prediction Result</h3>
+                <p id="prediction-text">Results will appear here.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById("image-form").onsubmit = async function(event) {
+            event.preventDefault();
+            
+            let formData = new FormData(this);
+            let response = await fetch("/predict_xray", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            document.getElementById("prediction-text").innerText = "Predicted Class: " + result.prediction;
+        };
+    </script>
+</body>
+</html>

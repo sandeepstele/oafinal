@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Data Analysis - OA Disease Detection</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Clinical Data Analysis</h1>
+        <a href="/" class="back-button">Back to Home</a>
+    </header>
+    
+    <main>
+        <section id="clinical-data">
+            <h2>Enter Clinical Data</h2>
+            <form id="clinical-form" method="POST" action="/predict_clinical">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" required>
+
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" required>
+
+                <label for="bmi">BMI:</label>
+                <input type="number" id="bmi" name="bmi" required>
+
+                <label for="frequent_pain">Frequent Pain (1: Yes, 0: No):</label>
+                <input type="number" id="frequent_pain" name="frequent_pain" required>
+
+                <label for="surgery">Surgery (1: Yes, 0: No):</label>
+                <input type="number" id="surgery" name="surgery" required>
+
+                <label for="risk">Risk Factor (1-10):</label>
+                <input type="number" id="risk" name="risk" required>
+
+                <label for="sxkoa">SXKOA (1: Yes, 0: No):</label>
+                <input type="number" id="sxkoa" name="sxkoa" required>
+
+                <label for="swelling">Swelling (1: Yes, 0: No):</label>
+                <input type="number" id="swelling" name="swelling" required>
+
+                <label for="bending_fully">Bending Fully (1: Yes, 0: No):</label>
+                <input type="number" id="bending_fully" name="bending_fully" required>
+
+                <label for="symptomatic">Symptomatic (1: Yes, 0: No):</label>
+                <input type="number" id="symptomatic" name="symptomatic" required>
+
+                <label for="crepitus">Crepitus (1: Yes, 0: No):</label>
+                <input type="number" id="crepitus" name="crepitus" required>
+
+                <label for="koos_pain_score">KOOS Pain Score:</label>
+                <input type="number" step="0.1" id="koos_pain_score" name="koos_pain_score" required>
+
+                <label for="osteophytes_y">Osteophytes (1: Yes, 0: No):</label>
+                <input type="number" id="osteophytes_y" name="osteophytes_y" required>
+
+                <label for="jsn_y">JSN (1: Yes, 0: No):</label>
+                <input type="number" id="jsn_y" name="jsn_y" required>
+
+                <label for="osfl">Osfl:</label>
+                <input type="number" step="0.1" id="osfl" name="osfl" required>
+
+                <label for="scfl">Scfl:</label>
+                <input type="number" step="0.1" id="scfl" name="scfl" required>
+
+                <label for="cyfl">Cyfl:</label>
+                <input type="number" step="0.1" id="cyfl" name="cyfl" required>
+
+                <button type="submit">Submit Clinical Data</button>
+            </form>
+            <div id="clinical-result">
+                <h3>Prediction Result</h3>
+                <p id="prediction-text">Results will appear here.</p>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        document.getElementById("clinical-form").onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            let response = await fetch("/predict_clinical", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            document.getElementById("prediction-text").innerText = "Predicted Class: " + result.prediction;
+        };
+    </script>
+</body>
+</html>

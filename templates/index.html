@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osteoarthritis Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Osteoarthritis Detection System</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/xray">X-ray Model</a></li>
+                <li><a href="/clinical">Clinical Data Model</a></li>
+                <li><a href="/fusion">Late Fusion Model</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="welcome">
+        <h2>Welcome to the OA Detection System</h2>
+        <p>
+            This system predicts Knee Osteoarthritis severity (KL Grade 0-4) using either:
+        </p>
+        <ul>
+            <li><strong>X-ray Model:</strong> Upload an X-ray for diagnosis.</li>
+            <li><strong>Clinical Data Model:</strong> Enter clinical parameters to predict KL grade.</li>
+            <li><strong>Late Fusion Model:</strong> Combine both X-ray and clinical data for the most accurate result.</li>
+        </ul>
+        <p>
+            Click on a model above to get started!
+        </p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 OA Detection System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

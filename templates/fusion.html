@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OA Late Fusion Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>OA Disease Detection - Late Fusion</h1>
+    
+    <form id="fusionForm" enctype="multipart/form-data">
+        <!-- X-ray Upload -->
+        <h3>Upload X-ray Image</h3>
+        <input type="file" name="xray" accept="image/*" required>
+        
+        <!-- Clinical Data Inputs -->
+        <h3>Enter Clinical Data</h3>
+        <label>Age: <input type="number" name="AGE" required></label>
+        <label>Height (cm): <input type="number" name="HEIGHT" required></label>
+        <label>Weight (kg): <input type="number" name="WEIGHT" required></label>
+        <label>BMI: <input type="number" name="BMI" required></label>
+        <label>Frequent Pain (0/1): <input type="number" name="FREQUENT_PAIN" required></label>
+        <label>SXKOA (0/1): <input type="number" name="SXKOA" required></label>
+        <label>Swelling (0/1): <input type="number" name="SWELLING" required></label>
+        <label>Bending Fully (0/1): <input type="number" name="BENDING_FULLY" required></label>
+        <label>Symptomatic (0/1): <input type="number" name="SYMPTOMATIC" required></label>
+        <label>Crepitus (0/1): <input type="number" name="CREPITUS" required></label>
+        <label>KOOS Pain Score: <input type="number" name="KOOS_PAIN_SCORE" required></label>
+        <label>Osteophytes (0/1): <input type="number" name="OSTEOPHYTES_Y" required></label>
+        <label>JSN (0/1): <input type="number" name="JSN_Y" required></label>
+        <label>OSFL: <input type="number" name="OSFL" required></label>
+        <label>SCFL: <input type="number" name="SCFL" required></label>
+        <label>CYFL: <input type="number" name="CYFL" required></label>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <h2>Predicted KL Grade: <span id="predictionResult">Waiting...</span></h2>
+
+    <script>
+        document.getElementById("fusionForm").onsubmit = async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const response = await fetch("/predict_fusion", { method: "POST", body: formData });
+            const result = await response.json();
+            
+            document.getElementById("predictionResult").innerText = result.prediction || "Error";
+        };
+    </script>
+</body>
+</html>

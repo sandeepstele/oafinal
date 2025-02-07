@@ -1,0 +1,8 @@
+Flask
+numpy
+pandas
+tensorflow
+opencv-python
+werkzeug
+xgboost
+joblib
