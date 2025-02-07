@@ -12,4 +12,4 @@ dist/
 venv/
 env/
 .venv/
-.DS_store
+.DS_Store
